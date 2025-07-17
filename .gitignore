@@ -1,0 +1,4 @@
+*.wpress
+.idea/
+tmp.md
+*.sql

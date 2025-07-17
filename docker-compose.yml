@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    restart: always
+    ports:
+      - "1000:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: queryopt
+      WORDPRESS_DB_PASSWORD: queryopt_password
+      WORDPRESS_DB_NAME: queryopt_db
+    volumes:
+      - ./wordpress:/var/www/html
+    networks:
+      - queryopt_network
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: queryopt_db
+      MYSQL_USER: queryopt
+      MYSQL_PASSWORD: queryopt_password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - queryopt_network
+
+  phpmyadmin_queryopt:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_queryopt
+    restart: always
+    ports:
+      - "1001:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root_password
+    networks:
+      - queryopt_network
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+
+networks:
+  queryopt_network:
+    driver: bridge
